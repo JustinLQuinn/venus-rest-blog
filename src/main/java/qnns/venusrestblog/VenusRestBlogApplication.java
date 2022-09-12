@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class VenusRestBlogApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(VenusRestBlogApplication.class, args);
     }
 
