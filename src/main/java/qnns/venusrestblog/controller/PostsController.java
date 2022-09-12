@@ -1,4 +1,4 @@
-package qnns.venusrestblog.web;
+package qnns.venusrestblog.controller;
 
 import org.springframework.web.bind.annotation.*;
 import qnns.venusrestblog.data.Post;
