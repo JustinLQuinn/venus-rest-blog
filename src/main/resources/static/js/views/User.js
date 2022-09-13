@@ -22,6 +22,7 @@ return`
         <button id="toggleShowPassword" name="toggleShowPassword">Show Password?</button>
         <button id="updatePassword" name="updatePassword">Save New Password</button>
     </form>
+    
     `;
 }
 export function prepareUserJS() {
