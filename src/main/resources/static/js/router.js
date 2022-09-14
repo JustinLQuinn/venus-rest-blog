@@ -72,6 +72,15 @@ export default function router(URI) {
             uri: location.pathname,
             title: 'Loading...',
         }
+        // '/EditUsers': {
+        //     returnView: generateEditusersHTML,
+        //     state: {
+        //         posts: '/api/posts'
+        //     },
+        //     uri: '/posts',
+        //     title: 'All Posts',
+        //     viewEvent: EditusersSetup
+        // }
     };
 
     return routes[URI];

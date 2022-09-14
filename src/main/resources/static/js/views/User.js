@@ -16,8 +16,7 @@ return`
         <input type="password" id="newpassword" name="newpassword">
         <br>
         <label for="confirmpassword">Confirm new password</label>
-        <input type="password" id="confirmpassword" name="confirmpassword">
-            
+        <input type="password" id="confirmpassword" name="confirmpassword">  
         <br>
         <button id="toggleShowPassword" name="toggleShowPassword">Show Password?</button>
         <button id="updatePassword" name="updatePassword">Save New Password</button>

@@ -1,126 +1,79 @@
 package qnns.venusrestblog.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import qnns.venusrestblog.data.User;
-import qnns.venusrestblog.data.UserRole;
+import qnns.venusrestblog.data.UserRepository;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
+@AllArgsConstructor
 @RestController
 @RequestMapping(value = "/api/users", produces = "application/json")
 public class UsersController {
-    private final List<User> users = new ArrayList<>(List.of(new User(1, "docrob", "docrob@docrob.com", "12345", LocalDate.now(), UserRole.ADMIN, new ArrayList<>())));
-    private long nextId = 2;
+    private UserRepository usersRepository;
 
     @GetMapping("")
     public List<User> fetchUsers() {
-        return users;
+      return  usersRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public User fetchUserById(@PathVariable long id) {
-        // search through the list of posts
-        // and return the post that matches the given id
-        User user = findUserById(id);
-        if(user == null) {
-            // what to do if we don't find it
-            throw new RuntimeException("I don't know what I am doing");
-        }
-
-        // we found the post so just return it
-        return user;
+    public Optional<User> fetchUserById(@PathVariable long id) {
+        return usersRepository.findById(id);
     }
 
     @GetMapping("/me")
-    private User fetchMe() {
-        return users.get(0);
+    private Optional<User> fetchMe() {
+
+        return usersRepository.findById(1L);
     }
 
     @GetMapping("/username/{userName}")
     private User fetchByUserName(@PathVariable String userName) {
-        User user = findUserByUserName(userName);
-        if(user == null) {
-            // what to do if we don't find it
-            throw new RuntimeException("I don't know what I am doing");
-        }
-        return user;
+//        User user = findUserByUserName(userName);
+//        if(user == null) {
+//            // what to do if we don't find it
+//            throw new RuntimeException("I don't know what I am doing");
+//        }
+        return usersRepository.findByUsername(userName);
     }
 
     @GetMapping("/email/{email}")
     private User fetchByEmail(@PathVariable String email) {
-        User user = findUserByEmail(email);
-        if(user == null) {
-            // what to do if we don't find it
-            throw new RuntimeException("I don't know what I am doing");
-        }
-        return user;
+//        User user = findUserByEmail(email);
+//        if(user == null) {
+//            // what to do if we don't find it
+//            throw new RuntimeException("I don't know what I am doing");
+//        }
+        return usersRepository.findByEmail(email);
     }
 
-    private User findUserByUserName(String userName) {
-        for (User user: users) {
-            if(user.getUsername().equals(userName)) {
-                return user;
-            }
-        }
+    private Optional<User> findUserById(long id) {
         // didn't find it so do something
-        return null;
-    }
-
-    private User findUserByEmail(String email) {
-        for (User user: users) {
-            if(user.getEmail().equals(email)) {
-                return user;
-            }
-        }
-        // didn't find it so do something
-        return null;
-    }
-
-    private User findUserById(long id) {
-        for (User user: users) {
-            if(user.getId() == id) {
-                return user;
-            }
-        }
-        // didn't find it so do something
-        return null;
+        return usersRepository.findById(id);
     }
 
     @PostMapping("/create")
     public void createUser(@RequestBody User newUser) {
-        // assign  nextId to the new post
-        newUser.setId(nextId);
-        // don't need the below line at this point but just for kicks
-        newUser.setCreatedAt(LocalDate.now());
-        nextId++;
-
-        users.add(newUser);
+       newUser =
+        usersRepository.save(newUser);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUserById(@PathVariable long id) {
-        // search through the list of posts
-        // and delete the post that matches the given id
-        User user = findUserById(id);
-        if(user != null) {
-            users.remove(user);
-            return;
-        }
-        // what to do if we don't find it
-        throw new RuntimeException("User not found");
+        usersRepository.deleteById(id);
     }
 
     @PutMapping("/{id}")
     public void updateUser(@RequestBody User updatedUser, @PathVariable long id) {
         // find the post to update in the posts list
 
-        User user = findUserById(id);
+        User user = usersRepository.findById(id).get();
         if(user == null) {
             System.out.println("User not found");
         } else {
@@ -134,14 +87,14 @@ public class UsersController {
 
     @PutMapping("/{id}/updatePassword")
     private void updatePassword(@PathVariable Long id, @RequestParam(required = false) String oldPassword, @Valid @Size(min = 3) @RequestParam String newPassword) {
-        User user = findUserById(id);
-        if(user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id" + id + "not found");
-        }
+        User user = usersRepository.findById(id).get();
+//        if(user == null) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User id" + id + "not found");
+//        }
 
         // compare old password with saved pw
         if(!user.getPassword().equals(oldPassword)) {
-            throw new RuntimeException("amscray");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "amscray");
         }
 
         // validate new password
@@ -150,5 +103,6 @@ public class UsersController {
         }
 
         user.setPassword(newPassword);
+        usersRepository.save(user);
     }
 }

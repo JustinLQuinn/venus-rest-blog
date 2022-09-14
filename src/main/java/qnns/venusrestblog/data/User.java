@@ -17,29 +17,33 @@ import java.util.Collection;
 @ToString
 
 @Entity
+@Table(name="users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false,unique = true, length = 100)
     private String username;
 
     @Email
     @NotEmpty
+    @Column(nullable = false, length = 100)
     private String email;
 
     @ToString.Exclude
+    @Column(nullable = false,unique = true, length = 100)
     private String password;
 
+    @Column(nullable = false)
     private LocalDate createdAt;
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column
     private UserRole role;
 
     @Transient
     private Collection<Post> posts;
 
 }
-
