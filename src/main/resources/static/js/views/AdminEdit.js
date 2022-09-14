@@ -2,30 +2,31 @@ import CreateView from "../createView.js";
 
 let posts;
 
-export default function PostIndex(props) {
+export default function generateEditusersHTML(props) {
     const postsHTML = generatePostsHTML(props.posts);
     // save this for loading edits later
     posts = props.posts;
 
     return `
         <header>
-            <h1>Posts Page</h1>
+            <h1>Admin Edit Page</h1>
         </header>
         <main>
-              <h3>Lists of posts</h3>
+              <h3>Lists of Users</h3>
             <div>
                 ${postsHTML}   
-            </div>           
-            <h3>Add a post</h3>
-            <form>
-                <label for="title">Title</label><br>
-                <input id="title" name="title" type="text" placeholder="Enter title">
-                <br>
-                <label for="content">Content</label><br>
-                <textarea id="content" name="content" rows="10" cols="50" placeholder="Enter content"></textarea>
-                <br>
-                <button data-id="0" id="savePost" name="savePost" class="button btn-primary">Save Post</button>
-            </form>
+            </div>
+            
+<!--            <h3>Edit User</h3>-->
+<!--            <form>-->
+<!--                <label for="title">Title</label><br>-->
+<!--                <input id="title" name="title" type="text" placeholder="Enter title">-->
+<!--                <br>-->
+<!--                <label for="content">Content</label><br>-->
+<!--                <textarea id="content" name="content" rows="10" cols="50" placeholder="Enter content"></textarea>-->
+<!--                <br>-->
+<!--                <button data-id="0" id="savePost" name="savePost" class="button btn-primary">Save Post</button>-->
+<!--            </form>-->
             
         </main>
     `;
@@ -36,10 +37,11 @@ function generatePostsHTML(posts) {
         <table class="table">
         <thead>
         <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Content</th>
-            <th scope="col">Author</th>
-            <th scope="col">Categories</th>
+            <th scope="col">Username</th>
+            <th scope="col">Created</th>
+            <th scope="col">Email</th>
+            <th scope="col">Password</th>
+            <th scope="col">Role</th>
         </tr>
         </thead>
         <tbody>
@@ -47,17 +49,17 @@ function generatePostsHTML(posts) {
     for (let i = 0; i < posts.length; i++) {
         const post = posts[i];
         let categories = '';
-        // for(let j = 0; j < post.categories.length; j++){
-        //     if(categories !== ""){
-        //         categories += ", ";
-        //     }
-        //     categories += post.categories[j].name;
-        // }
+        for(let j = 0; j < post.categories.length; j++){
+            if(categories !== ""){
+                categories += ", ";
+            }
+            categories += post.categories[j].name;
+        }
         postsHTML += `<tr>
             <td>${post.title}</td>
             <td>${post.content}</td>
             <td>${categories}</td>
-            <td>${post.userName}</td>
+            <td>${post.author.userName}</td>
             <td><button data-id=${post.id} class="button btn-primary editPost">Edit</button></td>
             <td><button data-id=${post.id} class="button btn-danger deletePost">Delete</button></td>
             </tr>`;

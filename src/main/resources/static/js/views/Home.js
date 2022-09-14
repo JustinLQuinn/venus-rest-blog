@@ -1,5 +1,5 @@
 export default function Home(props) {
-    console.log("The frontend did it. HER FAULT");
+
     return `
         <header>
             <h1>Home Page</h1>
@@ -7,7 +7,7 @@ export default function Home(props) {
         <main>
             <div>
                 <p>
-                    This is the home page text.
+                    Today we will look at...
                 </p>    
             </div>
         </main>

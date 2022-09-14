@@ -1,23 +1,23 @@
 package qnns.venusrestblog.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import qnns.venusrestblog.data.Category;
 import qnns.venusrestblog.data.Post;
 import qnns.venusrestblog.data.PostsRepository;
+import qnns.venusrestblog.data.UserRepository;
 import qnns.venusrestblog.data.User;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@AllArgsConstructor
 @RestController
 @RequestMapping(value = "/api/posts", produces = "application/json")
 public class PostsController {
     private PostsRepository postsRepository;
+    private UserRepository usersRepository;
 
-    public PostsController(PostsRepository postsRepository){
-        this.postsRepository = postsRepository;
-    }
     @GetMapping("")
 //    @RequestMapping(value = "/", method = RequestMethod.GET)
     public List<Post> fetchPosts() {
@@ -42,12 +42,10 @@ public class PostsController {
     @PostMapping("")
     public void createPost(@RequestBody Post newPost) {
         //use fake author
-//        User fakeAuthor = new User();
-//        fakeAuthor.setId(99);
-//        fakeAuthor.setUsername("fake Author");
-//        fakeAuthor.setEmail("fakeAuthor@stuff.com");
-//        newPost.setAuthor(fakeAuthor);
-//
+        User author = usersRepository.findById(1L).get();
+        newPost.setAuthor(author);
+
+        Category cat1 =
 //        Category cat1 = new Category(1L, "bunnies", null);
 //        Category cat2 = new Category(2L, "Dog", null);
 //        newPost.setCategories(new ArrayList<>());

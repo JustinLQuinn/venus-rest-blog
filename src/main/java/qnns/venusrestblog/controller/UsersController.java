@@ -9,6 +9,7 @@ import qnns.venusrestblog.data.UserRepository;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 @AllArgsConstructor
@@ -60,7 +61,7 @@ public class UsersController {
 
     @PostMapping("/create")
     public void createUser(@RequestBody User newUser) {
-       newUser =
+       newUser.setCreatedAt(LocalDate.now());
         usersRepository.save(newUser);
     }
 
