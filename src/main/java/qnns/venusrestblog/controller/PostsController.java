@@ -2,11 +2,7 @@ package qnns.venusrestblog.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import qnns.venusrestblog.data.Category;
-import qnns.venusrestblog.data.Post;
-import qnns.venusrestblog.data.PostsRepository;
-import qnns.venusrestblog.data.UserRepository;
-import qnns.venusrestblog.data.User;
+import qnns.venusrestblog.data.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +13,7 @@ import java.util.Optional;
 public class PostsController {
     private PostsRepository postsRepository;
     private UserRepository usersRepository;
-
+    private CategoriesRepository categoriesRepository;
     @GetMapping("")
 //    @RequestMapping(value = "/", method = RequestMethod.GET)
     public List<Post> fetchPosts() {
@@ -45,7 +41,12 @@ public class PostsController {
         User author = usersRepository.findById(1L).get();
         newPost.setAuthor(author);
 
-        Category cat1 =
+        Category cat1 = categoriesRepository.findById(1L).get();
+        Category cat2 = categoriesRepository.findById(2L).get();
+        newPost.setCategories(new ArrayList<>());
+        newPost.getCategories().add(cat1);
+        newPost.getCategories().add(cat2);
+
 //        Category cat1 = new Category(1L, "bunnies", null);
 //        Category cat2 = new Category(2L, "Dog", null);
 //        newPost.setCategories(new ArrayList<>());

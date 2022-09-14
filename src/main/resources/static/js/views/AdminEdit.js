@@ -1,11 +1,11 @@
 import CreateView from "../createView.js";
 
-let posts;
+let users;
 
 export default function generateEditusersHTML(props) {
-    const postsHTML = generatePostsHTML(props.posts);
+    const postHTML = generateEditusersHTML(props.users);
     // save this for loading edits later
-    posts = props.posts;
+    users = props.users;
 
     return `
         <header>
@@ -14,7 +14,7 @@ export default function generateEditusersHTML(props) {
         <main>
               <h3>Lists of Users</h3>
             <div>
-                ${postsHTML}   
+                ${userHTML}   
             </div>
             
 <!--            <h3>Edit User</h3>-->
@@ -32,8 +32,8 @@ export default function generateEditusersHTML(props) {
     `;
 }
 
-function generatePostsHTML(posts) {
-    let postsHTML = `
+function generatePostsHTML(users) {
+    let userHTML = `
         <table class="table">
         <thead>
         <tr>
@@ -46,32 +46,33 @@ function generatePostsHTML(posts) {
         </thead>
         <tbody>
     `;
-    for (let i = 0; i < posts.length; i++) {
-        const post = posts[i];
+    for (let i = 0; i < users.length; i++) {
+        const user = users[i];
         let categories = '';
-        for(let j = 0; j < post.categories.length; j++){
+        for(let j = 0; j < user.categories.length; j++){
             if(categories !== ""){
                 categories += ", ";
             }
             categories += post.categories[j].name;
         }
-        postsHTML += `<tr>
-            <td>${post.title}</td>
-            <td>${post.content}</td>
-            <td>${categories}</td>
-            <td>${post.author.userName}</td>
-            <td><button data-id=${post.id} class="button btn-primary editPost">Edit</button></td>
-            <td><button data-id=${post.id} class="button btn-danger deletePost">Delete</button></td>
+        userHTML += `<tr>
+            <td>${userName}</td>
+            <td>${created_at}</td>
+            <td>${email}</td>
+            <td>${password}</td>
+            <td>${role}</td>
+            <td><button data-id=${User.id} class="button btn-primary editPost">Edit</button></td>
+            <td><button data-id=${User.id} class="button btn-danger deletePost">Delete</button></td>
             </tr>`;
     }
-    postsHTML += `</tbody></table>`;
-    return postsHTML;
+    userHTML += `</tbody></table>`;
+    return userHTML;
 }
 
 
 
 
-export function postSetup() {
+export function pageSetup() {
     setupSaveHandler();
     setupEditHandlers();
     setupDeleteHandlers();
