@@ -1,7 +1,10 @@
 package qnns.venusrestblog.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import qnns.venusrestblog.data.*;
 
 import java.util.ArrayList;
@@ -66,7 +69,14 @@ public class PostsController {
     @PutMapping("/{id}")
     public void updatePost(@RequestBody Post updatedPost, @PathVariable long id) {
         updatedPost.setId(id);
-        postsRepository.save(updatedPost);
+
+        Optional<Post> originalPost = postsRepository.findById(id);
+        if(originalPost.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post "+ id + " not found");
+        }
+//        BeanUtils.copyProperties(updatedPost, originalPost.get(), FieldHelper.getNullPropertyNames(updatedPost));
+
+        postsRepository.save(originalPost.get());
         // find the post to update in the posts list
 //        Post post = findPostById(id);
 //        if(post == null) {

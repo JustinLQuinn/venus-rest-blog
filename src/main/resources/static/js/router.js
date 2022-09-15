@@ -7,8 +7,8 @@ import Login from "./views/Login.js";
 import LoginEvent from "./auth.js";
 import Register from "./views/Register.js"
 import {RegisterEvent} from "./views/Register.js";
-import generateEditusersHTML, {pageSetup} from "./views/AdminEdit.js";
-
+import prepareUserHTML, {prepareUserJS} from "./views/User.js";
+import generateUsersHTML , {userSetup} from "./views/AdminEdit.js";
 /**
  * Returns the route object for a specific route based on the given URI
  * @param URI
@@ -73,13 +73,13 @@ export default function router(URI) {
             title: 'Loading...',
         },
         '/users': {
-            returnView: generateEditusersHTML,
+            returnView: generateUsersHTML,
             state: {
                 users: '/api/users'
             },
             uri: '/users',
-            title: 'UserEdit',
-            viewEvent: pageSetup
+            title: 'All Users',
+            viewEvent: userSetup
         }
     };
 

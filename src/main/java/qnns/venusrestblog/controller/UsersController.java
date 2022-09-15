@@ -25,7 +25,11 @@ public class UsersController {
 
     @GetMapping("/{id}")
     public Optional<User> fetchUserById(@PathVariable long id) {
-        return usersRepository.findById(id);
+        Optional<User> user = usersRepository.findById(id);
+        if(fetchUsers().isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User "+ id + "not found");
+        }
+        return user;
     }
 
     @GetMapping("/me")
