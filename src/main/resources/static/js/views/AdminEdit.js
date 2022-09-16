@@ -18,14 +18,14 @@ export default function PostIndex(props) {
             <div id="editForm" hidden>         
                 <h3>Edit a User</h3>
                 <form>
-                    <label>User: ${users.username}</label><br>
-                    <label for="changEmail">Email</label><br>
+                    <label id="showUserName"></label><br>
+                    <label for="changEmail" id="showEmail"></label><br>
                     <input id="changEmail" name="email" type="email" placeholder="New Email">
                     <br>
                     <label for="changPassword">Password</label><br>
                     <input id="changPassword" name="password" type="email" placeholder="New Password">
                     <br>
-                    <label for="changRole">Role</label><br>
+                    <label for="changRole" id="showRole"></label><br>
                     <input id="changRole" name="role" type="email" placeholder="New Role">
                     <br>
                     <button data-id="0" id="savePost" name="savePost" class="button btn-primary">Save User</button>
@@ -83,7 +83,7 @@ function setupEditHandlers() {
 //
 //             // get the post id of the delete button
             const userId = parseInt(this.getAttribute("data-id"));
-//
+            loadUserIntoForm(userId);
 //             // loadUserIntoForm(postId);
             let form = document.getElementById("editForm");
             form.toggleAttribute("hidden");
@@ -94,22 +94,27 @@ function setupEditHandlers() {
 
 function loadUserIntoForm(userId) {
     // go find the post in the posts data that matches postId
-    const post = fetchUserById(userId);
-    if(!users) {
-        console.log("did not find post for id " + userId);
+    const user = fetchUserById(userId);
+    if(!user) {
+        console.log("did not find user for id " + userId);
         return;
     }
-
+        const namei = document.getElementById("showUserName");
+        const emaili = document.getElementById("showEmail");
+        const rolei = document.getElementById("showRole");
+        namei.innerText = `User: ${user.username}`;
+        emaili.innerText = `Email: ${user.email}`;
+        rolei.innerText = `Role: ${user.role}`;
     // load the post data into the form
-    const titleField = document.querySelector("#title");
-    const contentField = document.querySelector("#content");
-    titleField.value = post.title;
-    contentField.value = post.content;
+    // const titleField = document.querySelector("#title");
+    // const contentField = document.querySelector("#content");
+    // titleField.value = post.title;
+    // contentField.value = post.content;
 
     const saveButton = document.querySelector("#savePost");
     saveButton.setAttribute("data-id", userId);
 }
-//
+
 function fetchUserById(userId) {
     for (let i = 0; i < users.length; i++) {
         if(users[i].id === userId) {
