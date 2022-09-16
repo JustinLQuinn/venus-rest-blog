@@ -1,11 +1,13 @@
 package qnns.venusrestblog.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import qnns.venusrestblog.data.*;
+import qnns.venusrestblog.repository.CategoriesRepository;
+import qnns.venusrestblog.repository.PostsRepository;
+import qnns.venusrestblog.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;

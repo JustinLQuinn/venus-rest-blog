@@ -18,18 +18,17 @@ export default function PostIndex(props) {
             <div>         
                 <h3>Edit a User</h3>
                 <form>
-                    <label>User: ${users.username}</label><br>
-                    <label>Start Date: </label><br>
+                    <label>User: (username)</label><br>
                     <label for="changEmail">Email</label><br>
                     <input id="changEmail" name="email" type="email" placeholder="New Email">
                     <br>
                     <label for="changPassword">Password</label><br>
-                    <input id="changPassword" name="password" type="email" placeholder="New Email">
+                    <input id="changPassword" name="password" type="email" placeholder="New Password">
                     <br>
                     <label for="changRole">Role</label><br>
-                    <input id="changRole" name="role" type="email" placeholder="New Email">
+                    <input id="changRole" name="role" type="email" placeholder="New Role">
                     <br>
-                    <button data-id="0" id="savePost" name="savePost" class="button btn-primary">Save Post</button>
+                    <button data-id="0" id="savePost" name="savePost" class="button btn-primary">Save User</button>
                 </form>
             </div>
         </main>
@@ -52,13 +51,6 @@ function generateUsersHTML(users) {
     `;
     for (let i = 0; i < users.length; i++) {
         const post = users[i];
-        let categories = '';
-        // for(let j = 0; j < post.categories.length; j++){
-        //     if(categories !== ""){
-        //         categories += ", ";
-        //     }
-        //     categories += post.categories[j].name;
-        // }
         postsHTML += `<tr>
             <td>${post.username}</td>
             <td>${post.createdAt}</td>
