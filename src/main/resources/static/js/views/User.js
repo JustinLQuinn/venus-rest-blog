@@ -3,6 +3,8 @@ import CreateView from "../createView.js"
 let me;
 export default function prepareUserHTML(props) {
     me = props.me;
+
+    const userPostHTML = createPostHTML(me);
 return`
     <h1>User Info</h1>
     <h2>${props.me.username}</h2>
@@ -22,7 +24,39 @@ return`
         <button id="updatePassword" name="updatePassword">Save New Password</button>
     </form>
     
+    <hr>
+        ${userPostHTML}
+        
     `;
+}
+
+function createPostHTML(user) {
+    let html = `
+        <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Content</th>
+        </tr>
+        </thead>
+        <tbody>
+    `;
+
+    // add a row to the table for each user post
+    for (let i = 0; i < user.posts.length; i++) {
+        const post = user.posts[i];
+        html += `<tr>
+            <td>${post.title}</td>
+            <td>${post.content}</td>
+            </tr>`;
+    }
+
+    // finish the table
+    html += `
+        </tbody>
+        </table>`;
+
+    return html;
 }
 export function prepareUserJS() {
     doTogglePasswordHandler();

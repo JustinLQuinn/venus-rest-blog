@@ -1,10 +1,12 @@
 package qnns.venusrestblog.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import qnns.venusrestblog.data.*;
+import qnns.venusrestblog.misc.FieldHelper;
 import qnns.venusrestblog.repository.CategoriesRepository;
 import qnns.venusrestblog.repository.PostsRepository;
 import qnns.venusrestblog.repository.UserRepository;
@@ -64,8 +66,11 @@ public class PostsController {
     @DeleteMapping("/{id}")
     public void deletePostById(@PathVariable long id) {
         postsRepository.deleteById(id);
-        // what to do if we don't find it
-        throw new RuntimeException("Post not found");
+        // what to do if we find it
+        Optional<Post> originalPost = postsRepository.findById(id);
+        if (originalPost.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,"Post was not deleted");
+        }
     }
 
     @PutMapping("/{id}")
@@ -76,7 +81,7 @@ public class PostsController {
         if(originalPost.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post "+ id + " not found");
         }
-//        BeanUtils.copyProperties(updatedPost, originalPost.get(), FieldHelper.getNullPropertyNames(updatedPost));
+        BeanUtils.copyProperties(updatedPost, originalPost.get(), FieldHelper.getNullPropertyNames(updatedPost));
 
         postsRepository.save(originalPost.get());
         // find the post to update in the posts list

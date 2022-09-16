@@ -15,10 +15,10 @@ export default function PostIndex(props) {
             <div>
                 ${postsHTML}   
             </div>  
-            <div>         
+            <div id="editForm" hidden>         
                 <h3>Edit a User</h3>
                 <form>
-                    <label>User: (username)</label><br>
+                    <label>User: ${users.username}</label><br>
                     <label for="changEmail">Email</label><br>
                     <input id="changEmail" name="email" type="email" placeholder="New Email">
                     <br>
@@ -50,15 +50,15 @@ function generateUsersHTML(users) {
         <tbody>
     `;
     for (let i = 0; i < users.length; i++) {
-        const post = users[i];
+        const user = users[i];
         postsHTML += `<tr>
-            <td>${post.username}</td>
-            <td>${post.createdAt}</td>
-            <td>${post.email}</td>
-            <td>${post.password}</td>
-            <td>${post.role}</td>
-            <td><button data-id=${post.id} class="button btn-primary editPost">Edit</button></td>
-            <td><button data-id=${post.id} class="button btn-danger deletePost">Delete</button></td>
+            <td>${user.username}</td>
+            <td>${user.createdAt}</td>
+            <td>${user.email}</td>
+            <td>${user.password}</td>
+            <td>${user.role}</td>
+            <td><button data-id=${user.id} class="button btn-primary editUser">Edit</button></td>
+            <td><button data-id=${user.id} class="button btn-danger deleteUser">Delete</button></td>
             </tr>`;
     }
     postsHTML += `</tbody></table>`;
@@ -70,58 +70,56 @@ function generateUsersHTML(users) {
 
 export function userSetup() {
     // setupSaveHandler();
-    // setupEditHandlers();
+    setupEditHandlers();
     // setupDeleteHandlers();
 }
 
-// function setupEditHandlers() {
+function setupEditHandlers() {
 //     // target all delete buttons
-//     const editButtons = document.querySelectorAll(".editPost");
-//     // add click handler to all delete buttons
-//     for (let i = 0; i < editButtons.length; i++) {
-//         editButtons[i].addEventListener("click", function(event) {
+    const editButtons = document.querySelectorAll(".editUser");
+//     // add click handler to all edit buttons
+    for (let i = 0; i < editButtons.length; i++) {
+        editButtons[i].addEventListener("click", function(event) {
 //
 //             // get the post id of the delete button
-//             const postId = parseInt(this.getAttribute("data-id"));
+            const userId = parseInt(this.getAttribute("data-id"));
 //
-//             loadPostIntoForm(postId);
-//         });
-//     }
-// }
+//             // loadUserIntoForm(postId);
+            let form = document.getElementById("editForm");
+            form.toggleAttribute("hidden");
 //
-// function loadPostIntoForm(postId) {
-//     // go find the post in the posts data that matches postId
-//     const post = fetchPostById(postId);
-//     if(!post) {
-//         console.log("did not find post for id " + postId);
-//         return;
-//     }
+        });
+    }
+}
+
+function loadUserIntoForm(userId) {
+    // go find the post in the posts data that matches postId
+    const post = fetchUserById(userId);
+    if(!users) {
+        console.log("did not find post for id " + userId);
+        return;
+    }
+
+    // load the post data into the form
+    const titleField = document.querySelector("#title");
+    const contentField = document.querySelector("#content");
+    titleField.value = post.title;
+    contentField.value = post.content;
+
+    const saveButton = document.querySelector("#savePost");
+    saveButton.setAttribute("data-id", userId);
+}
 //
-//     // load the post data into the form
-//     const titleField = document.querySelector("#title");
-//     const contentField = document.querySelector("#content");
-//     titleField.value = post.title;
-//     contentField.value = post.content;
-//
-//     const saveButton = document.querySelector("#savePost");
-//     saveButton.setAttribute("data-id", postId);
-// }
-//
-// function fetchPostById(postId) {
-//     for (let i = 0; i < posts.length; i++) {
-//         if(posts[i].id === postId) {
-//             return posts[i];
-//         }
-//
-//     }
-//     // didn't find it so return something falsy
-//     return false;
-// }
-//
-//
-//
-//
-//
+function fetchUserById(userId) {
+    for (let i = 0; i < users.length; i++) {
+        if(users[i].id === userId) {
+            return users[i];
+        }
+
+    }
+    // didn't find it so return something falsy
+    return false;
+}
 //
 // function setupDeleteHandlers() {
 //     // target all delete buttons
@@ -154,12 +152,6 @@ export function userSetup() {
 //             CreateView("/posts");
 //         })
 // }
-//
-//
-//
-//
-//
-//
 //
 // function setupSaveHandler() {
 //     const saveButton = document.querySelector("#savePost");

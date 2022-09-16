@@ -47,17 +47,23 @@ function generatePostsHTML(posts) {
     for (let i = 0; i < posts.length; i++) {
         const post = posts[i];
         let categories = '';
-        // for(let j = 0; j < post.categories.length; j++){
-        //     if(categories !== ""){
-        //         categories += ", ";
-        //     }
-        //     categories += post.categories[j].name;
-        // }
+        if(post.categories) {
+            for (let j = 0; j < post.categories.length; j++) {
+                if (categories !== "") {
+                    categories += ", ";
+                }
+                categories += post.categories[j].name;
+            }
+        }
+        let authorName = "";
+        if(post.author) {
+            authorName = post.author.userName;
+        }
         postsHTML += `<tr>
             <td>${post.title}</td>
             <td>${post.content}</td>
+            <td>${authorName}</td>
             <td>${categories}</td>
-            <td>${post.userName}</td>
             <td><button data-id=${post.id} class="button btn-primary editPost">Edit</button></td>
             <td><button data-id=${post.id} class="button btn-danger deletePost">Delete</button></td>
             </tr>`;
@@ -65,9 +71,6 @@ function generatePostsHTML(posts) {
     postsHTML += `</tbody></table>`;
     return postsHTML;
 }
-
-
-
 
 export function postSetup() {
     setupSaveHandler();
@@ -119,11 +122,6 @@ function fetchPostById(postId) {
     return false;
 }
 
-
-
-
-
-
 function setupDeleteHandlers() {
     // target all delete buttons
     const deleteButtons = document.querySelectorAll(".deletePost");
@@ -133,7 +131,7 @@ function setupDeleteHandlers() {
 
             // get the post id of the delete button
             const postId = this.getAttribute("data-id");
-
+            console.log("BeforeDeletePody id ="  + postId);
             deletePost(postId);
         });
     }
@@ -153,14 +151,8 @@ function deletePost(postId) {
                 return;
             }
             CreateView("/posts");
-        })
+        });
 }
-
-
-
-
-
-
 
 function setupSaveHandler() {
     const saveButton = document.querySelector("#savePost");
@@ -178,7 +170,8 @@ function savePost(postId) {
     // make the new/updated post object
     const post = {
         title: titleField.value,
-        content: contentField.value
+        content: contentField.value,
+        authorId: 1
     }
 
     // make the request
@@ -203,5 +196,5 @@ function savePost(postId) {
                 return;
             }
             CreateView("/posts");
-        })
+        });
 }
