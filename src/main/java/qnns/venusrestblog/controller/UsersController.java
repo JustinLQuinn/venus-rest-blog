@@ -3,9 +3,11 @@ package qnns.venusrestblog.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import qnns.venusrestblog.data.User;
+import qnns.venusrestblog.data.UserRole;
 import qnns.venusrestblog.repository.UserRepository;
 import qnns.venusrestblog.misc.FieldHelper;
 
@@ -19,6 +21,7 @@ import java.util.Optional;
 @RequestMapping(value = "/api/users", produces = "application/json")
 public class UsersController {
     private UserRepository usersRepository;
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("")
     public List<User> fetchUsers() {
@@ -37,28 +40,8 @@ public class UsersController {
     @GetMapping("/me")
     private Optional<User> fetchMe() {
 
-        return usersRepository.findById(1L);
+        return usersRepository.findById(4L);
     }
-
-//    @GetMapping("/username/{userName}")
-//    private User fetchByUserName(@PathVariable String userName) {
-//        User user = findUserByUserName(userName);
-//        if(user == null) {
-//            // what to do if we don't find it
-//            throw new RuntimeException("I don't know what I am doing");
-//        }
-//        return usersRepository.findByUsername(userName);
-//    }
-//
-//    @GetMapping("/email/{email}")
-//    private User fetchByEmail(@PathVariable String email) {
-////        User user = findUserByEmail(email);
-////        if(user == null) {
-////            // what to do if we don't find it
-////            throw new RuntimeException("I don't know what I am doing");
-////        }
-//        return usersRepository.findByEmail(email);
-//    }
 
     private Optional<User> findUserById(long id) {
         // didn't find it so do something
@@ -67,8 +50,14 @@ public class UsersController {
 
     @PostMapping("/create")
     public void createUser(@RequestBody User newUser) {
+       newUser.setRole(UserRole.USER);
+
+       String plainTextPassword = newUser.getPassword();
+       String encryptedPassword = passwordEncoder.encode(plainTextPassword);
+       newUser.setPassword(encryptedPassword);
+
        newUser.setCreatedAt(LocalDate.now());
-        usersRepository.save(newUser);
+       usersRepository.save(newUser);
     }
 
     @DeleteMapping("/{id}")
@@ -110,10 +99,11 @@ public class UsersController {
 
         // validate new password
         if(newPassword.length() < 3) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "NEW password length must be at least 3 characters");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "NEW password too few characters");
         }
 
         user.setPassword(newPassword);
         usersRepository.save(user);
     }
+
 }
