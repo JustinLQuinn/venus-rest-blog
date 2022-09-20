@@ -3,6 +3,7 @@ package qnns.venusrestblog.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,21 +33,16 @@ public class PostsController {
 
     @GetMapping("/{id}")
     public Optional<Post> fetchPostById(@PathVariable long id) {
-//        // search through the list of posts
-//        // and return the post that matches the given id
-//        Post post = findPostById(id);
-//        if(post == null) {
-//            // what to do if we don't find it
-//            throw new RuntimeException("I don't know what I am doing");
-//        }
-//
-//        // we found the post so just return it
-//        return post;
+
         return postsRepository.findById(id);
     }
 
     @PostMapping("")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
     public void createPost(@RequestBody Post newPost, OAuth2Authentication auth) {
+//        if(auth == null){
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login Please...");
+//        }
         //use fake author
         String userName = auth.getName();
         User author = usersRepository.findByUsername(userName);
@@ -64,6 +60,7 @@ public class PostsController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
     public void deletePostById(@PathVariable long id) {
         postsRepository.deleteById(id);
         // what to do if we find it
@@ -74,6 +71,7 @@ public class PostsController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
     public void updatePost(@RequestBody Post updatedPost, @PathVariable long id) {
         updatedPost.setId(id);
 
@@ -84,19 +82,5 @@ public class PostsController {
         BeanUtils.copyProperties(updatedPost, originalPost.get(), FieldHelper.getNullPropertyNames(updatedPost));
 
         postsRepository.save(originalPost.get());
-        // find the post to update in the posts list
-//        Post post = findPostById(id);
-//        if(post == null) {
-//            System.out.println("Post not found");
-//        } else {
-//            if(updatedPost.getTitle() != null) {
-//                post.setTitle(updatedPost.getTitle());
-//            }
-//            if(updatedPost.getContent() != null) {
-//                post.setContent(updatedPost.getContent());
-//            }
-//            return;
-//        }
-//        throw new RuntimeException("Post not found");
     }
 }

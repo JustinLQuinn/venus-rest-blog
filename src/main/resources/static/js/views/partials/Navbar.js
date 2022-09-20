@@ -1,13 +1,30 @@
+import {getUserRole, isLoggedIn} from "../../auth.js";
+
 export default function Navbar(props) {
-    return `
-        <nav>
-            <a href="/" data-link>Home</a>
-            <a href="/posts" data-link>Posts</a>
-            <a href="/about" data-link>About</a>
+
+    let navbar = `<nav>
+        <a href="/" data-link>Home</a>
+        <a href="/about" data-link>About</a>
+        <a href="/posts" data-link>Posts</a>
+         `;
+    if (isLoggedIn()) {
+        navbar += `
+        <a href="/me" data-link>About ME</a>
+        `;
+        // console.log();
+        if (getUserRole() === "ADMIN") {
+            navbar += `
+        <a href="/users" data-link>Admin Edit</a>
+        `;
+        }
+        } else {
+            navbar += `
             <a href="/login" data-link>Login</a>
             <a href="/register" data-link>Register</a>
-            <a href="/me" data-link>About ME</a>
-            <a href="/users" data-link>Admin Edit</a>
-        </nav>
-    `;
-}
+            `;
+
+        }
+    navbar += `</nav>`;
+    return navbar;
+    }
+

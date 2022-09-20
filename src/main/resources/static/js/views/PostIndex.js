@@ -172,7 +172,6 @@ function savePost(postId) {
     const post = {
         title: titleField.value,
         content: contentField.value,
-        authorId: 4
     }
 
     // make the request

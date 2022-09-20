@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import qnns.venusrestblog.data.User;
@@ -38,9 +39,10 @@ public class UsersController {
     }
 
     @GetMapping("/me")
-    private Optional<User> fetchMe() {
-
-        return usersRepository.findById(4L);
+    private Optional<User> fetchMe(OAuth2Authentication auth) {
+        String userName = auth.getName();
+        User user =  usersRepository.findByUsername(userName);
+        return Optional.of(user);
     }
 
     private Optional<User> findUserById(long id) {
