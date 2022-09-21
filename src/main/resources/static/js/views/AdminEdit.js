@@ -8,10 +8,10 @@ export default function PostIndex(props) {
 
     return `
         <header>
-            <h1>Admin Page</h1>
+            <h1></h1>
         </header>
         <main>
-              <h3>Lists of Users</h3>
+              <h3>Users</h3>
             <div>
                 ${postsHTML}   
             </div>  
@@ -28,7 +28,7 @@ export default function PostIndex(props) {
                     <label for="changRole" id="showRole"></label><br>
                     <input id="changRole" name="role" type="email" placeholder="New Role">
                     <br>
-                    <button data-id="0" id="savePost" name="savePost" class="button btn-primary">Save User</button>
+                    <button data-id="0" id="saveUser" name="saveUser" class="button btn-primary">Save User</button>
                 </form>
             </div>
         </main>
@@ -40,10 +40,10 @@ function generateUsersHTML(users) {
         <table class="table">
         <thead>
         <tr>
-            <th scope="col">Username</th>
+            <th scope="col" >Username</th>
             <th scope="col">Start Date</th>
             <th scope="col">Email</th>
-            <th scope="col col-2">Password</th>
+            <th scope="col">Password</th>
             <th scope="col">Role</th>
         </tr>
         </thead>
@@ -69,7 +69,7 @@ function generateUsersHTML(users) {
 
 
 export function userSetup() {
-    // setupSaveHandler();
+    setupSaveHandler();
     setupEditHandlers();
     // setupDeleteHandlers();
 }
@@ -105,11 +105,6 @@ function loadUserIntoForm(userId) {
         namei.innerText = `User: ${user.username}`;
         emaili.innerText = `Email: ${user.email}`;
         rolei.innerText = `Role: ${user.role}`;
-    // load the post data into the form
-    // const titleField = document.querySelector("#title");
-    // const contentField = document.querySelector("#content");
-    // titleField.value = post.title;
-    // contentField.value = post.content;
 
     const saveButton = document.querySelector("#savePost");
     saveButton.setAttribute("data-id", userId);
@@ -158,14 +153,14 @@ function fetchUserById(userId) {
 //         })
 // }
 //
-// function setupSaveHandler() {
-//     const saveButton = document.querySelector("#savePost");
-//     saveButton.addEventListener("click", function(event) {
-//         const postId = parseInt(this.getAttribute("data-id"));
-//         savePost(postId);
-//     });
-// }
-//
+function setupSaveHandler() {
+    const saveButton = document.querySelector("#saveUser");
+    saveButton.addEventListener("click", function(event) {
+        const postId = parseInt(this.getAttribute("data-id"));
+        savePost(postId);
+    });
+}
+
 // function savePost(postId) {
 //     // get the title and content for the new/updated post
 //     const titleField = document.querySelector("#title");
