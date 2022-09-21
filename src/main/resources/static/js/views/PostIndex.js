@@ -1,8 +1,9 @@
 import CreateView from "../createView.js";
-import {getHeaders, getUser, getUserRole, isLoggedIn} from "../auth.js";
+import {getHeaders, getUser, isLoggedIn} from "../auth.js";
 
 let posts;
 let loggedInUser;
+let categories;
 
 export default function PostIndex(props) {
     //refresh current logged in User
@@ -10,6 +11,9 @@ export default function PostIndex(props) {
     const postsHTML = generatePostsHTML(props.posts);
     // save this for loading edits later
     posts = props.posts;
+    categories = props.categories;
+
+    const addPostHTML = generateAddPostHTML();
 
     return `
         <header>
@@ -19,10 +23,24 @@ export default function PostIndex(props) {
               <h3>Lists of posts</h3>
             <div>
                 ${postsHTML}   
-            </div>`;
-    if (isLoggedIn()) {
-        return `
-            <h3>Add a post</h3>
+            </div>
+            
+                ${addPostHTML}
+            
+        </main>
+    `;
+}
+
+function generateAddPostHTML() {
+    let addHTML = ``;
+
+    if(!isLoggedIn()) {
+        return addHTML;
+    }
+
+    const categoryHTML = generateCategoryHTML(categories);
+
+    addHTML = `<h3>Add a post</h3>
             <form>
                 <div>
                     <label for="title">Title</label><br>
@@ -37,7 +55,7 @@ export default function PostIndex(props) {
                 
                 <div>
                     <label for="content">Content</label><br>
-                    <textarea id="content" class="form-control" name="content" rows="10" cols="50" placeholder="Enter content"></textarea>
+                    <textarea id="content" class="form-control" name="content" rows="5" cols="50" placeholder="Enter content"></textarea>
                     <div class="invalid-feedback">
                         Content cannot be blank.
                     </div>
@@ -45,14 +63,31 @@ export default function PostIndex(props) {
                         Content is ok!
                     </div>
                 </div>
-                   <button data-id="0" id="savePost" name="savePost" class="button btn-primary">Save Post</button>        
-            </form>
-            
-        </main>
-    `;
-    }
+                
+                <h6 class="my-category-group">Categories</h6>
+                ${categoryHTML}
+                
+                <button data-id="0" id="savePost" name="savePost" type="button" class="my-button button btn-primary">Save Post</button>
+            </form>`;
+
+    return addHTML;
 }
 
+function generateCategoryHTML(categories) {
+    let catHTML = ``;
+    for (let i = 0; i < categories.length; i++) {
+        const category = categories[i];
+
+        catHTML += `
+            <div class="form-check">
+                <input class="form-check-input category-checkbox" type="checkbox" value="" data-id="${category.id}" id="category_${category.id}">
+                <label class="form-check-label" for="flexCheckDefault">
+                    ${category.name}
+                </label>
+            </div>`;
+    }
+    return catHTML;
+}
 
     function generatePostsHTML(posts) {
         let postsHTML = `
@@ -80,29 +115,29 @@ export default function PostIndex(props) {
             }
             let authorName = "";
             if (post.author) {
-                authorName = post.author.username.toString();
+                authorName = post.author.username;
             }
             postsHTML += `<tr>
             <td>${post.title}</td>
             <td>${post.content}</td>
             <td>${authorName}</td>
             <td>${categories}</td>`;
-            if (isLoggedIn()) {
-                postsHTML += `
-            <td>
-            <button data-id=${post.id} class="button btn-primary editPost">Edit</button>
-            </td>
-            <td>
-            <button data-id=${post.id} class="button btn-danger deletePost">Delete</button>
-            </td>`;
+            if(loggedInUser) {
+                if (loggedInUser.role === 'ADMIN' || loggedInUser.userName === post.author.userName) {
+                    postsHTML += `<td><button data-id=${post.id} class="row-button button btn-primary editPost">Edit</button></td>
+                <td><button data-id=${post.id} class="row-button button btn-danger deletePost">Delete</button></td>`;
+                } else {
+                    postsHTML += `<td></td><td></td>`;
+                }
             }
-
-            postsHTML += `</tr></tbody></table>`;
-            return postsHTML;
+            postsHTML += `</tr>`;
         }
+        postsHTML += `</tbody></table>`;
+        return postsHTML;
     }
 
-    export function postSetup() {
+
+export function postSetup() {
         setupSaveHandler();
         setupEditHandlers();
         setupDeleteHandlers();
@@ -171,6 +206,21 @@ export default function PostIndex(props) {
         titleField.value = post.title;
         contentField.value = post.content;
 
+        // load the post's categories
+        const checkboxes = document.querySelectorAll(".category-checkbox");
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = false;
+            if(post.categories) {
+                for (let j = 0; j < post.categories.length; j++) {
+                    if(parseInt(checkboxes[i].getAttribute("data-id")) === post.categories[j].id) {
+                        checkboxes[i].checked = true;
+                    }
+                }
+            }
+        }
+
+        validateFields();
+
         const saveButton = document.querySelector("#savePost");
         saveButton.setAttribute("data-id", postId);
     }
@@ -195,7 +245,6 @@ export default function PostIndex(props) {
 
                 // get the post id of the delete button
                 const postId = this.getAttribute("data-id");
-                console.log("BeforeDeleteBody id =" + postId);
                 deletePost(postId);
             });
         }
@@ -235,11 +284,12 @@ export default function PostIndex(props) {
             return;
         }
         // make the new/updated post object
+        const selectedCategories = getSelectedCategories();
         const post = {
             title: titleField.value,
             content: contentField.value,
+            categories: selectedCategories
         }
-
         // make the request
         const request = {
             method: "POST",
@@ -264,4 +314,21 @@ export default function PostIndex(props) {
                 CreateView("/posts");
             })
 
-}
+    }
+
+    function getSelectedCategories() {
+        let cats = [];
+        const checkboxes = document.querySelectorAll(".category-checkbox");
+
+        for (let i = 0; i < checkboxes.length; i++) {
+            const checkbox = checkboxes[i];
+            if (checkbox.checked) {
+                const id = checkbox.getAttribute("data-id");
+                const cat = {
+                    id
+                }
+            cats.push(cat);
+            }
+        }
+            return cats;
+    }
