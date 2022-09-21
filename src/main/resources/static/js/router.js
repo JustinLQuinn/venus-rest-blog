@@ -29,6 +29,13 @@ export default function router(URI) {
             title: "Login",
             viewEvent: LoginEvent
         },
+        '/logout': {
+            returnView: Logout,
+            state: {},
+            uri: '/logout',
+            title: "Logout",
+            viewEvent: LogoutEvent
+        },
         '/register': {
             returnView: Register,
             state: {},
@@ -48,7 +55,8 @@ export default function router(URI) {
         '/posts': {
             returnView: PostIndex,
             state: {
-                posts: '/api/posts'
+                posts: '/api/posts',
+                categories: '/api/categories'
             },
             uri: '/posts',
             title: 'All Posts',
@@ -80,13 +88,8 @@ export default function router(URI) {
             uri: '/users',
             title: 'All Users',
             viewEvent: userSetup
-        },
-        '/logout': {
-            returnView: Logout,
-            uri: '/logout',
-            title: "Logout",
-            viewEvent: LogoutEvent
         }
+
     };
 
     return routes[URI];

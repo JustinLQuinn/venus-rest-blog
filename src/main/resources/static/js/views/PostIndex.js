@@ -155,7 +155,7 @@ export function postSetup() {
     function validateFields() {
         let isValid = true;
         let input = document.querySelector("#title");
-        if (input.value.trim().length < 1) {
+        if (input.value.trim().length < 3) {
             input.classList.add("is-invalid");
             input.classList.remove("is-valid");
             isValid = false;
@@ -165,7 +165,7 @@ export function postSetup() {
         }
 
         input = document.querySelector("#content");
-        if (input.value.trim().length < 1) {
+        if (input.value.trim().length < 5) {
             input.classList.add("is-invalid");
             input.classList.remove("is-valid");
             isValid = false;

@@ -12,7 +12,6 @@ export default function Navbar(props) {
         <a href="/me" data-link>About ME</a>
         <a href="/logout" data-link>Logout</a>
         `;
-        // console.log();
         if (getUserRole() === "ADMIN") {
             navbar += `
         <a href="/users" data-link>Admin Edit</a>
