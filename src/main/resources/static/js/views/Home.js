@@ -1,5 +1,5 @@
-export default function Home(props) {
 
+export default function Home(props) {
     return `
         <header>
             <h1>Home Page</h1>
@@ -7,7 +7,7 @@ export default function Home(props) {
         <main>
             <div>
                 <p>
-                    Today we will look at...
+                    Welcome to ... 
                 </p>    
             </div>
         </main>

@@ -21,7 +21,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "/api/posts", produces = "application/json")
 public class PostsController {
-    private final EmailService emailService;
+    private EmailService emailService;
     private PostsRepository postsRepository;
     private UserRepository usersRepository;
     private CategoriesRepository categoriesRepository;
@@ -33,21 +33,26 @@ public class PostsController {
 
     @GetMapping("/{id}")
     public Optional<Post> fetchPostById(@PathVariable long id) {
-
-        return postsRepository.findById(id);
+        Optional<Post> optionalPost = postsRepository.findById(id);
+        if(optionalPost.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post id " + id + " not found");
+        }
+        return optionalPost;
     }
 
     @PostMapping("")
     @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
     public void createPost(@RequestBody Post newPost, OAuth2Authentication auth) {
-//        if(auth == null){
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login Please...");
-//        }
-        //use fake author
+        if(newPost.getTitle() == null || newPost.getTitle().length() < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title cannot be blank!");
+        }
+        if(newPost.getContent() == null || newPost.getContent().length() < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Content cannot be blank!");
+        }
+
         String userName = auth.getName();
         User author = usersRepository.findByUsername(userName);
 
-//        User author = usersRepository.findById(1L).get();
         newPost.setAuthor(author);
         newPost.setCategories(new ArrayList<>());
 
@@ -61,24 +66,44 @@ public class PostsController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
-    public void deletePostById(@PathVariable long id) {
-        postsRepository.deleteById(id);
+    public void deletePostById(@PathVariable long id, OAuth2Authentication auth) {
+        String userName = auth.getName();
+        User loggedInUser = usersRepository.findByUsername(userName);
+
+
         // what to do if we find it
-        Optional<Post> originalPost = postsRepository.findById(id);
-        if (originalPost.isPresent()) {
+        Optional<Post> optionalPost = postsRepository.findById(id);
+        if (optionalPost.isPresent()) {
             throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED,"Post was not deleted");
         }
+        // grab the original post from the optional and check the logged in user
+        Post originalPost = optionalPost.get();
+
+        // admin can delete anyone's post. author of the post can delete only their posts
+        if(loggedInUser.getRole() != UserRole.ADMIN && originalPost.getAuthor().getId() != loggedInUser.getId()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not your post!");
+        }
+
+        postsRepository.deleteById(id);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN')")
-    public void updatePost(@RequestBody Post updatedPost, @PathVariable long id) {
-        updatedPost.setId(id);
+    public void updatePost(@RequestBody Post updatedPost, @PathVariable long id, OAuth2Authentication auth) {
+        String userName = auth.getName();
+        User loggedInUser = usersRepository.findByUsername(userName);
 
         Optional<Post> originalPost = postsRepository.findById(id);
         if(originalPost.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post "+ id + " not found");
         }
+
+        if(loggedInUser.getRole() != UserRole.ADMIN && originalPost.get().getAuthor().getId() != loggedInUser.getId()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not your post!");
+        }
+
+        updatedPost.setId(id);
+
         BeanUtils.copyProperties(updatedPost, originalPost.get(), FieldHelper.getNullPropertyNames(updatedPost));
 
         postsRepository.save(originalPost.get());

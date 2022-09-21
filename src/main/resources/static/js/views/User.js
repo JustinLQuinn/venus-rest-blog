@@ -1,14 +1,14 @@
 import CreateView from "../createView.js"
 
-let me;
+export let me;
 export default function prepareUserHTML(props) {
     me = props.me;
 
     const userPostHTML = createPostHTML(me);
 return`
     <h1>User Info</h1>
-    <h2>${props.me.username}</h2>
-    <h2>${props.me.email}</h2>
+    <h2>${me.username}</h2>
+    <h2>${me.email}</h2>
     
     <form>
         <label for="oldpassword">Please enter your current password</label>

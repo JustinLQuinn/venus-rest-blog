@@ -10,6 +10,7 @@ export default function Navbar(props) {
     if (isLoggedIn()) {
         navbar += `
         <a href="/me" data-link>About ME</a>
+        <a href="/logout" data-link>Logout</a>
         `;
         // console.log();
         if (getUserRole() === "ADMIN") {
@@ -22,7 +23,6 @@ export default function Navbar(props) {
             <a href="/login" data-link>Login</a>
             <a href="/register" data-link>Register</a>
             `;
-
         }
     navbar += `</nav>`;
     return navbar;

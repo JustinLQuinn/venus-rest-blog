@@ -1,6 +1,13 @@
 import CreateView from "../createView.js"
+import {isLoggedIn} from "../auth.js";
+import createView from "../createView.js";
 
 export default function Register(props) {
+    if(isLoggedIn()) {
+        createView("/");
+        return;
+    }
+
     return `
     <!DOCTYPE html>
         <html>
@@ -11,6 +18,8 @@ export default function Register(props) {
             <body>
                 <h1>Register</h1>
         
+                    <a href="/login" data-link>Go to login</a>
+                
                 <form id="register-form">
                     <label for="username">Username</label>
                     <input id="username" name="username" type="text"/>
