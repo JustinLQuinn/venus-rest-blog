@@ -43,7 +43,7 @@ function generateUsersHTML(users) {
             <th scope="col" >Username</th>
             <th scope="col">Start Date</th>
             <th scope="col">Email</th>
-            <th scope="col">Password</th>
+            <th scope="col" class="col-4-user">Password</th>
             <th scope="col">Role</th>
         </tr>
         </thead>
